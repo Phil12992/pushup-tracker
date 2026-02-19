@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Push-Up Pro</title>
+    <title>Push-Up Pro - Dein Personal Trainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; min-height: 100vh; }
         
-        .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: radial-gradient(ellipse at top, rgba(255,107,53,0.1) 0%, transparent 50%); }
         .auth-card { background: #111; border: 1px solid #222; border-radius: 24px; padding: 40px; max-width: 420px; width: 100%; text-align: center; }
         .auth-logo { font-size: 60px; margin-bottom: 10px; }
         .auth-title { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -18,32 +18,37 @@
         .form-group label { display: block; font-size: 14px; color: #888; margin-bottom: 8px; }
         .form-input { width: 100%; padding: 14px 16px; border: 2px solid #222; border-radius: 12px; background: #0a0a0a; color: #fff; font-size: 16px; }
         .form-input:focus { outline: none; border-color: #ff6b35; }
-        .auth-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff6b35, #e55a2b); border: none; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .auth-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff6b35, #e55a2b); border: none; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,53,0.35); }
         .auth-toggle { margin-top: 20px; color: #666; font-size: 14px; }
         .auth-toggle a { color: #ff6b35; cursor: pointer; }
         
         .app { display: none; }
         .app.active { display: block; }
-        .header { background: rgba(10,10,10,0.95); border-bottom: 1px solid #222; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+        .header { background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid #222; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
         .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header-logo { font-size: 20px; font-weight: 700; }
         .header-logo span { color: #ff6b35; }
         .header-nav { display: flex; gap: 8px; flex-wrap: wrap; }
-        .nav-btn { padding: 10px 16px; background: transparent; border: 1px solid #222; border-radius: 10px; color: #888; font-size: 14px; cursor: pointer; }
+        .nav-btn { padding: 10px 16px; background: transparent; border: 1px solid #222; border-radius: 10px; color: #888; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .nav-btn:hover { border-color: #333; color: #fff; }
         .nav-btn.active { background: #ff6b35; border-color: #ff6b35; color: #fff; }
         .header-actions { display: flex; align-items: center; gap: 12px; }
         .streak-badge { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #111; border: 1px solid #222; border-radius: 50px; font-weight: 600; font-size: 14px; }
         .streak-badge.fire { color: #f59e0b; }
         .streak-badge.ice { color: #3b82f6; }
+        .coach-badge { display: none; align-items: center; gap: 6px; padding: 8px 16px; background: #111; border: 1px solid #222; border-radius: 50px; font-weight: 600; font-size: 14px; }
         .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #e55a2b); display: flex; align-items: center; justify-content: center; font-weight: 700; }
-        .btn-logout { padding: 10px 16px; background: #111; border: 1px solid #222; border-radius: 10px; color: #fff; cursor: pointer; }
+        .btn-logout { padding: 10px 16px; background: #111; border: 1px solid #222; border-radius: 10px; color: #fff; cursor: pointer; transition: all 0.2s; }
+        .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
         
         .main { padding: 30px 20px; max-width: 1200px; margin: 0 auto; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 20px; text-align: center; }
+        .stat-card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 20px; text-align: center; transition: border-color 0.2s; }
+        .stat-card:hover { border-color: #ff6b35; }
         .stat-value { font-size: 28px; font-weight: 800; color: #ff6b35; }
         .stat-label { font-size: 12px; color: #666; text-transform: uppercase; margin-top: 5px; }
         
@@ -55,46 +60,105 @@
         .challenge-info-item { text-align: center; }
         .challenge-info-item .value { font-size: 20px; font-weight: 700; }
         .challenge-info-item .label { font-size: 12px; color: #666; }
-        .complete-btn { padding: 18px 50px; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 12px; color: #fff; font-size: 18px; font-weight: 700; cursor: pointer; }
+        .complete-btn { padding: 18px 50px; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 12px; color: #fff; font-size: 18px; font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .complete-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 30px rgba(16,185,129,0.4); }
         .complete-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .section { background: #111; border: 1px solid #222; border-radius: 20px; padding: 25px; margin-bottom: 25px; }
-        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-title { font-size: 18px; font-weight: 600; }
         
         .chart-container { height: 200px; display: flex; align-items: flex-end; gap: 6px; padding-top: 15px; }
-        .chart-bar { flex: 1; min-width: 10px; background: linear-gradient(to top, #ff6b35, #e55a2b); border-radius: 6px 6px 0 0; }
+        .chart-bar { flex: 1; min-width: 10px; background: linear-gradient(to top, #ff6b35, #e55a2b); border-radius: 6px 6px 0 0; cursor: pointer; transition: opacity 0.2s; }
+        .chart-bar:hover { opacity: 0.8; }
         .chart-bar.today { background: linear-gradient(to top, #10b981, #059669); }
         
         .ai-trainers { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .ai-trainer { background: #0a0a0a; border: 2px solid #222; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; }
+        .ai-trainer { background: #0a0a0a; border: 2px solid #222; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .ai-trainer:hover { border-color: #ff6b35; }
         .ai-trainer.selected { border-color: #ff6b35; background: rgba(255,107,53,0.1); }
         .ai-trainer .avatar { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; }
         .ai-trainer .name { font-weight: 600; margin-bottom: 4px; }
         .ai-trainer .specialty { font-size: 12px; color: #666; }
         .ai-trainer .quote { font-size: 12px; color: #888; margin-top: 8px; font-style: italic; }
         
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #111; border: 1px solid #222; padding: 14px 24px; border-radius: 12px; font-weight: 500; z-index: 2000; transition: transform 0.3s; }
+        .friends-list { max-height: 350px; overflow-y: auto; }
+        .friend-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #222; transition: background 0.2s; }
+        .friend-item:last-child { border-bottom: none; }
+        .friend-item:hover { background: #1a1a1a; }
+        .friend-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #e55a2b); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
+        .friend-info { flex: 1; }
+        .friend-name { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .friend-stats { font-size: 13px; color: #888; margin-top: 4px; }
+        .friend-stats span { color: #f59e0b; font-weight: 600; }
+        .friend-action-btn { padding: 8px 12px; background: #0a0a0a; border: 1px solid #222; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        
+        .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .photo-item { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; cursor: pointer; }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-overlay { position: absolute; inset: 0; background: linear-gradient(transparent 50%, rgba(0,0,0,0.8) 100%); display: flex; align-items: flex-end; padding: 10px; opacity: 0; transition: opacity 0.3s; }
+        .photo-item:hover .photo-overlay { opacity: 1; }
+        .photo-date { color: #fff; font-size: 12px; }
+        .photo-delete { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .photo-item:hover .photo-delete { opacity: 1; }
+        .photo-delete:hover { background: #ef4444; }
+        .empty-state { text-align: center; padding: 40px; color: #666; }
+        .empty-state .icon { font-size: 48px; opacity: 0.5; margin-bottom: 10px; }
+        
+        .body-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .body-input { text-align: center; }
+        .body-input label { display: block; font-size: 12px; color: #666; margin-bottom: 6px; }
+        .body-input input { width: 100%; padding: 12px; border: 2px solid #222; border-radius: 10px; background: #0a0a0a; color: #fff; text-align: center; font-size: 16px; font-weight: 600; transition: border-color 0.2s; }
+        .body-input input:focus { outline: none; border-color: #ff6b35; }
+        .ai-analysis { background: rgba(255,107,53,0.1); border: 1px solid #ff6b35; border-radius: 12px; padding: 20px; margin-top: 15px; }
+        .ai-analysis-header { display: flex; align-items: center; gap: 8px; font-weight: 600; color: #ff6b35; margin-bottom: 10px; }
+        .ai-analysis-content { font-size: 14px; line-height: 1.7; color: #aaa; }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: #111; border: 1px solid #222; border-radius: 20px; max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #222; }
+        .modal-header h3 { font-size: 18px; font-weight: 600; }
+        .modal-close { width: 36px; height: 36px; background: #0a0a0a; border: 1px solid #222; border-radius: 8px; color: #888; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .modal-close:hover { border-color: #ef4444; color: #ef4444; }
+        .modal-body { padding: 20px; }
+        .modal-body .form-group { margin-bottom: 20px; }
+        .modal-btn { width: 100%; padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; transition: transform 0.2s; }
+        .modal-btn-primary { background: linear-gradient(135deg, #ff6b35, #e55a2b); color: #fff; }
+        .modal-btn-secondary { background: #111; border: 1px solid #222; color: #fff; margin-top: 10px; }
+        
+        .camera-container { position: relative; background: #000; border-radius: 12px; overflow: hidden; aspect-ratio: 1; }
+        .camera-video { width: 100%; height: 100%; object-fit: cover; }
+        .camera-actions { display: flex; gap: 12px; margin-top: 15px; }
+        .camera-btn { flex: 1; padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; transition: transform 0.2s; }
+        .camera-btn-cancel { background: #111; border: 1px solid #222; color: #fff; }
+        .camera-btn-capture { background: linear-gradient(135deg, #ff6b35, #e55a2b); color: #fff; }
+        
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #111; border: 1px solid #222; padding: 14px 24px; border-radius: 12px; font-weight: 500; z-index: 2000; transition: transform 0.3s; max-width: 90%; }
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast.success { border-left: 4px solid #10b981; }
         .toast.error { border-left: 4px solid #ef4444; }
+        .toast.warning { border-left: 4px solid #f59e0b; }
         
-        .info-box { background: #1a1a1a; border-radius: 12px; padding: 20px; margin-top: 20px; }
-        .info-box h4 { color: #ff6b35; margin-bottom: 10px; }
-        .info-box p { font-size: 14px; color: #888; line-height: 1.6; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; transition: transform 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #ff6b35, #e55a2b); color: #fff; }
+        .btn:hover { transform: translateY(-2px); }
         
         @media (max-width: 768px) {
             .header-inner { flex-direction: column; }
+            .header-nav { justify-content: center; }
             .challenge-number { font-size: 60px; }
+            .challenge-info { gap: 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- Auth -->
+    <!-- Auth Screen -->
     <div class="auth-screen" id="authScreen">
         <div class="auth-card">
             <div class="auth-logo">💪</div>
             <h1 class="auth-title">Push-Up Pro</h1>
-            <p class="auth-subtitle">Dein Personal Trainer</p>
+            <p class="auth-subtitle">Dein professioneller Personal Trainer</p>
             <div class="form-group">
                 <label>Benutzername</label>
                 <input type="text" id="username" class="form-input" placeholder="Dein Name">
@@ -115,9 +179,13 @@
                 <div class="header-logo">💪 <span>Push-Up Pro</span></div>
                 <nav class="header-nav">
                     <button class="nav-btn active" data-tab="trainer" onclick="switchTab('trainer')">🏋️ Training</button>
+                    <button class="nav-btn" data-tab="body" onclick="switchTab('body')">📊 Koerper</button>
                     <button class="nav-btn" data-tab="ai" onclick="switchTab('ai')">🎯 Coach</button>
+                    <button class="nav-btn" data-tab="friends" onclick="switchTab('friends')">👥 Freunde</button>
+                    <button class="nav-btn" data-tab="photos" onclick="switchTab('photos')">📸 Fotos</button>
                 </nav>
                 <div class="header-actions">
+                    <div class="coach-badge" id="coachBadge"></div>
                     <div class="streak-badge fire" id="streakBadge"><span>🔥</span> <span id="streakCount">0</span> Tage</div>
                     <div class="user-avatar" id="userAvatar">P</div>
                     <button class="btn-logout" onclick="logout()">Ab</button>
@@ -138,7 +206,7 @@
                 <div class="challenge-card">
                     <span class="challenge-label">Dein Tagesziel</span>
                     <div class="challenge-number" id="todayTarget">1</div>
-                    <div class="challenge-unit">Liegestütz</div>
+                    <div class="challenge-unit">Liegestuetz</div>
                     <div class="challenge-info">
                         <div class="challenge-info-item"><div class="value" id="currentStreak">0</div><div class="label">Streak</div></div>
                         <div class="challenge-info-item"><div class="value" id="totalDays">Tag 1</div><div class="label">Trainingstag</div></div>
@@ -152,26 +220,101 @@
                 </div>
             </div>
             
+            <!-- Body Stats Tab -->
+            <div class="tab-content" id="bodyTab">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">📊 Koerper-Masse</h3>
+                        <button class="btn btn-primary" onclick="saveBodyStats()">💾 Speichern</button>
+                    </div>
+                    <div class="body-inputs">
+                        <div class="body-input"><label>Gewicht (kg)</label><input type="number" id="bodyWeight" step="0.1" placeholder="--"></div>
+                        <div class="body-input"><label>Bauch (cm)</label><input type="number" id="bodyWaist" step="0.5" placeholder="--"></div>
+                        <div class="body-input"><label>Arme (cm)</label><input type="number" id="bodyArms" step="0.5" placeholder="--"></div>
+                        <div class="body-input"><label>Brust (cm)</label><input type="number" id="bodyChest" step="0.5" placeholder="--"></div>
+                    </div>
+                    <div class="ai-analysis">
+                        <div class="ai-analysis-header">🧠 KI-Analyse</div>
+                        <div class="ai-analysis-content" id="aiAnalysisContent">Trage deine Masse ein fuer eine personalisierte Analyse.</div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- AI Coach Tab -->
             <div class="tab-content" id="aiTab">
                 <div class="section">
                     <h3 class="section-title">🎯 Dein KI-Coach</h3>
-                    <p style="color: #666; margin-bottom: 20px;">Wähle einen Coach - er motiviert dich!</p>
+                    <p style="color: #666; margin-bottom: 20px;">Waehle einen Coach - er motiviert dich jeden Tag!</p>
                     <div class="ai-trainers" id="aiTrainers"></div>
-                    
-                    <div class="info-box">
-                        <h4>🤖 Was macht der Coach?</h4>
-                        <p>Der Coach motiviert dich! Jeder Coach hat seinen eigenen Stil:<br><br>
-                        <strong>Arnold</strong> - motiviert hart ("Weiche nie!")<br>
-                        <strong>Rocky</strong> - inspiriert ("Es geht nicht darum, wie hart du schlägst...")<br>
-                        <strong>Mike</strong> - fokussiert auf Technik<br>
-                        <strong>Camille</strong> - balanceorientiert<br>
-                        <strong>Godzilla</strong> - pure Kraft<br><br>
-                        Dein Coach erscheint bei deinen Stats und feuert dich an! 🔥</p>
+                </div>
+            </div>
+            
+            <!-- Friends Tab -->
+            <div class="tab-content" id="friendsTab">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">👥 Freunde</h3>
+                        <button class="btn btn-primary" onclick="openFriendModal()">+ Hinzufuegen</button>
                     </div>
+                    <div class="friends-list" id="friendsList"></div>
+                </div>
+            </div>
+            
+            <!-- Photos Tab -->
+            <div class="tab-content" id="photosTab">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">📸 Deine Fotos</h3>
+                        <button class="btn btn-primary" onclick="openCamera()">📷 Neues Foto</button>
+                    </div>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Nur du kannst deine Fotos sehen!</p>
+                    <div class="photos-grid" id="photosGrid"></div>
                 </div>
             </div>
         </main>
+    </div>
+    
+    <!-- Camera Modal -->
+    <div class="modal-overlay" id="cameraModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📷 Foto aufnehmen</h3>
+                <button class="modal-close" onclick="closeCamera()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="camera-container">
+                    <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+                </div>
+                <div class="camera-actions">
+                    <button class="camera-btn camera-btn-cancel" onclick="closeCamera()">Abbrechen</button>
+                    <button class="camera-btn camera-btn-capture" onclick="takePhoto()">📷 Aufnehmen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Friend Modal -->
+    <div class="modal-overlay" id="friendModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Freund hinzufuegen</h3>
+                <button class="modal-close" onclick="closeFriendModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Benutzername</label>
+                    <input type="text" id="friendUsername" class="form-input" placeholder="Name des Freundes">
+                </div>
+                <div class="form-group">
+                    <label>KI-Coach zuweisen</label>
+                    <select id="friendAI" class="form-input">
+                        <option value="">-- Kein Coach --</option>
+                    </select>
+                </div>
+                <button class="modal-btn modal-btn-primary" onclick="confirmAddFriend()">Hinzufuegen</button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeFriendModal()">Abbrechen</button>
+            </div>
+        </div>
     </div>
     
     <div class="toast" id="toast"></div>
