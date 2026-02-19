@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push-Up Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; min-height: 100vh; }
+        
+        .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: #111; border: 1px solid #222; border-radius: 24px; padding: 40px; max-width: 420px; width: 100%; text-align: center; }
+        .auth-logo { font-size: 60px; margin-bottom: 10px; }
+        .auth-title { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-subtitle { color: #666; margin: 10px 0 30px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 14px; color: #888; margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 14px 16px; border: 2px solid #222; border-radius: 12px; background: #0a0a0a; color: #fff; font-size: 16px; }
+        .form-input:focus { outline: none; border-color: #ff6b35; }
+        .auth-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff6b35, #e55a2b); border: none; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .auth-toggle { margin-top: 20px; color: #666; font-size: 14px; }
+        .auth-toggle a { color: #ff6b35; cursor: pointer; }
+        
+        .app { display: none; }
+        .app.active { display: block; }
+        .header { background: rgba(10,10,10,0.95); border-bottom: 1px solid #222; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-logo { font-size: 20px; font-weight: 700; }
+        .header-logo span { color: #ff6b35; }
+        .header-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-btn { padding: 10px 16px; background: transparent; border: 1px solid #222; border-radius: 10px; color: #888; font-size: 14px; cursor: pointer; }
+        .nav-btn.active { background: #ff6b35; border-color: #ff6b35; color: #fff; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .streak-badge { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #111; border: 1px solid #222; border-radius: 50px; font-weight: 600; font-size: 14px; }
+        .streak-badge.fire { color: #f59e0b; }
+        .streak-badge.ice { color: #3b82f6; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #e55a2b); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .btn-logout { padding: 10px 16px; background: #111; border: 1px solid #222; border-radius: 10px; color: #fff; cursor: pointer; }
+        
+        .main { padding: 30px 20px; max-width: 1200px; margin: 0 auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 20px; text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 800; color: #ff6b35; }
+        .stat-label { font-size: 12px; color: #666; text-transform: uppercase; margin-top: 5px; }
+        
+        .challenge-card { background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(255,107,53,0.05)); border: 2px solid #ff6b35; border-radius: 24px; padding: 50px 30px; text-align: center; margin-bottom: 30px; }
+        .challenge-label { display: inline-block; padding: 8px 16px; background: #ff6b35; border-radius: 50px; font-size: 12px; font-weight: 600; margin-bottom: 15px; }
+        .challenge-number { font-size: 80px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, #ff6b35, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .challenge-unit { font-size: 24px; color: #666; margin-bottom: 20px; }
+        .challenge-info { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; }
+        .challenge-info-item { text-align: center; }
+        .challenge-info-item .value { font-size: 20px; font-weight: 700; }
+        .challenge-info-item .label { font-size: 12px; color: #666; }
+        .complete-btn { padding: 18px 50px; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 12px; color: #fff; font-size: 18px; font-weight: 700; cursor: pointer; }
+        .complete-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .section { background: #111; border: 1px solid #222; border-radius: 20px; padding: 25px; margin-bottom: 25px; }
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+        
+        .chart-container { height: 200px; display: flex; align-items: flex-end; gap: 6px; padding-top: 15px; }
+        .chart-bar { flex: 1; min-width: 10px; background: linear-gradient(to top, #ff6b35, #e55a2b); border-radius: 6px 6px 0 0; }
+        .chart-bar.today { background: linear-gradient(to top, #10b981, #059669); }
+        
+        .ai-trainers { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .ai-trainer { background: #0a0a0a; border: 2px solid #222; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; }
+        .ai-trainer.selected { border-color: #ff6b35; background: rgba(255,107,53,0.1); }
+        .ai-trainer .avatar { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; }
+        .ai-trainer .name { font-weight: 600; margin-bottom: 4px; }
+        .ai-trainer .specialty { font-size: 12px; color: #666; }
+        .ai-trainer .quote { font-size: 12px; color: #888; margin-top: 8px; font-style: italic; }
+        
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #111; border: 1px solid #222; padding: 14px 24px; border-radius: 12px; font-weight: 500; z-index: 2000; transition: transform 0.3s; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        
+        .info-box { background: #1a1a1a; border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .info-box h4 { color: #ff6b35; margin-bottom: 10px; }
+        .info-box p { font-size: 14px; color: #888; line-height: 1.6; }
+        
+        @media (max-width: 768px) {
+            .header-inner { flex-direction: column; }
+            .challenge-number { font-size: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-card">
+            <div class="auth-logo">💪</div>
+            <h1 class="auth-title">Push-Up Pro</h1>
+            <p class="auth-subtitle">Dein Personal Trainer</p>
+            <div class="form-group">
+                <label>Benutzername</label>
+                <input type="text" id="username" class="form-input" placeholder="Dein Name">
+            </div>
+            <div class="form-group">
+                <label>Passwort</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••">
+            </div>
+            <button class="auth-btn" id="authBtn" onclick="handleAuth()">Anmelden</button>
+            <p class="auth-toggle"><span id="authToggleText">Noch kein Account?</span> <a onclick="toggleAuthMode()" id="authToggleLink">Registrieren</a></p>
+        </div>
+    </div>
+    
+    <!-- App -->
+    <div class="app" id="app">
+        <header class="header">
+            <div class="header-inner">
+                <div class="header-logo">💪 <span>Push-Up Pro</span></div>
+                <nav class="header-nav">
+                    <button class="nav-btn active" data-tab="trainer" onclick="switchTab('trainer')">🏋️ Training</button>
+                    <button class="nav-btn" data-tab="ai" onclick="switchTab('ai')">🎯 Coach</button>
+                </nav>
+                <div class="header-actions">
+                    <div class="streak-badge fire" id="streakBadge"><span>🔥</span> <span id="streakCount">0</span> Tage</div>
+                    <div class="user-avatar" id="userAvatar">P</div>
+                    <button class="btn-logout" onclick="logout()">Ab</button>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main">
+            <!-- Training Tab -->
+            <div class="tab-content active" id="trainerTab">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-value" id="statDays">0</div><div class="stat-label">Tage</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Gesamt</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statToday">1</div><div class="stat-label">Heute</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statMax">0</div><div class="stat-label">Rekord</div></div>
+                </div>
+                
+                <div class="challenge-card">
+                    <span class="challenge-label">Dein Tagesziel</span>
+                    <div class="challenge-number" id="todayTarget">1</div>
+                    <div class="challenge-unit">Liegestütz</div>
+                    <div class="challenge-info">
+                        <div class="challenge-info-item"><div class="value" id="currentStreak">0</div><div class="label">Streak</div></div>
+                        <div class="challenge-info-item"><div class="value" id="totalDays">Tag 1</div><div class="label">Trainingstag</div></div>
+                    </div>
+                    <button class="complete-btn" id="completeBtn" onclick="completeToday()">✅ Erledigt!</button>
+                </div>
+                
+                <div class="section">
+                    <h3 class="section-title">📈 Fortschritt (14 Tage)</h3>
+                    <div class="chart-container" id="chartContainer"></div>
+                </div>
+            </div>
+            
+            <!-- AI Coach Tab -->
+            <div class="tab-content" id="aiTab">
+                <div class="section">
+                    <h3 class="section-title">🎯 Dein KI-Coach</h3>
+                    <p style="color: #666; margin-bottom: 20px;">Wähle einen Coach - er motiviert dich!</p>
+                    <div class="ai-trainers" id="aiTrainers"></div>
+                    
+                    <div class="info-box">
+                        <h4>🤖 Was macht der Coach?</h4>
+                        <p>Der Coach motiviert dich! Jeder Coach hat seinen eigenen Stil:<br><br>
+                        <strong>Arnold</strong> - motiviert hart ("Weiche nie!")<br>
+                        <strong>Rocky</strong> - inspiriert ("Es geht nicht darum, wie hart du schlägst...")<br>
+                        <strong>Mike</strong> - fokussiert auf Technik<br>
+                        <strong>Camille</strong> - balanceorientiert<br>
+                        <strong>Godzilla</strong> - pure Kraft<br><br>
+                        Dein Coach erscheint bei deinen Stats und feuert dich an! 🔥</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    <script src="app.js"></script>
+</body>
+</html>
